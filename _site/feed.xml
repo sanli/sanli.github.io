@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>中华珍宝馆博客</title>
+    <description>中华珍宝馆,中国历代高清书法图片欣赏和下载,高清绘画图片欣赏和下载.</description>
+    <link>http://sanli.github.io//</link>
+    <atom:link href="http://sanli.github.io//feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Thu, 02 Jul 2015 23:00:17 +0800</pubDate>
+    <lastBuildDate>Thu, 02 Jul 2015 23:00:17 +0800</lastBuildDate>
+    <generator>Jekyll v2.5.3</generator>
+    
+      <item>
+        <title>关于资源下载</title>
+        <description>&lt;p&gt;中华珍宝馆提供馆藏部分图片的下载，提供的一般规则为：&lt;/p&gt;
+
+&lt;p&gt;＃ 图片被选入铭心绝品栏目&lt;/p&gt;
+
+&lt;p&gt;或者&lt;/p&gt;
+
+&lt;p&gt;＃ 每天热评前三的图片
+＃ 有学术或者是出版要求的个人，请单独到QQ群中要求&lt;/p&gt;
+
+&lt;p&gt;愿大家有一个好的环境。&lt;/p&gt;
+
+</description>
+        <pubDate>Thu, 02 Jul 2015 18:49:36 +0800</pubDate>
+        <link>http://sanli.github.io//download/2015/07/02/move-to-github-pages.html</link>
+        <guid isPermaLink="true">http://sanli.github.io//download/2015/07/02/move-to-github-pages.html</guid>
+        
+        
+        <category>download</category>
+        
+      </item>
+    
+      <item>
+        <title>中华珍宝馆日志迁移到GitHub Pages</title>
+        <description>&lt;p&gt;一直苦于找不到一个好的博客服务商，最近开始迁移到GitHub Pages，运行一段时间看看效果。&lt;/p&gt;
+
+</description>
+        <pubDate>Thu, 02 Jul 2015 18:49:36 +0800</pubDate>
+        <link>http://sanli.github.io//download/2015/07/02/about-download.html</link>
+        <guid isPermaLink="true">http://sanli.github.io//download/2015/07/02/about-download.html</guid>
+        
+        
+        <category>download</category>
+        
+      </item>
+    
+  </channel>
+</rss>
