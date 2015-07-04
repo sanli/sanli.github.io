@@ -1,7 +1,7 @@
 # Site settings
-title: 中华珍宝馆Blog
+title: 兰亭富春
 email: santal.li@gmail.com
-description: 中华珍宝馆,中国历代高清书法图片欣赏和下载,高清绘画图片欣赏和下载，本站是中华珍宝馆的管理Blog
+description: 中华珍宝馆,中国历代高清书法图片欣赏和下载,高清绘画图片欣赏和下载，本站是中华珍宝馆的开发者Blog
 baseurl: "" # the subpath of your site, e.g. /blog/
 url: "http://sanli.github.io" # the base hostname & protocol for your site
 twitter_username: 中华珍宝馆Jean
