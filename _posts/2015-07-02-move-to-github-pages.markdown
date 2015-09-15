@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "关于资源下载"
+title:  "中华珍宝馆日志迁移到GitHub Pages"
 date:   2015-07-02 10:49:36
 categories: message
 ---
