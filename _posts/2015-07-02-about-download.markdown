@@ -1,7 +1,7 @@
 ---
 layout: post
-title:  "关于资源下载"
-date:   2015-07-02 10:49:36
+title: 关于资源下载
+date: 2015-07-02T10:49:36.000Z
 categories: message
 ---
 
@@ -16,3 +16,4 @@ categories: message
 ＃ 有学术或者是出版要求的个人，请到QQ群中索要图片（需提供原因）
 
 愿大家有一个好的环境，可以尽情的欣赏艺术。
+
