@@ -1,20 +1,24 @@
 
 <!DOCTYPE HTML>
-<html lang="" >
+<html lang="zh" >
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>馆藏列表 · GitBook</title>
+        <title>馆藏列表 · 兰亭富春</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
-        
+        <meta name="author" content="李双涛">
         
         
     
     <link rel="stylesheet" href="../gitbook/style.css">
 
     
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-disqus/plugin.css">
+                
             
                 
                 <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
@@ -71,7 +75,7 @@
         
             
 <div id="book-search-input" role="search">
-    <input type="text" placeholder="Type to search" />
+    <input type="text" placeholder="輸入並搜尋" />
 </div>
 
             
@@ -295,7 +299,7 @@
 
     <li>
         <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
-            Published with GitBook
+            本書使用 GitBook 釋出
         </a>
     </li>
 </ul>
@@ -334,6 +338,180 @@
                                 <section class="normal markdown-section">
                                 
                                 <p>&#x5168;&#x90E8;&#x5185;&#x5BB9;</p>
+<style>
+path {
+  stroke: #fff;
+  /* stroke-width: 1.5; */
+  cursor: pointer;
+}
+
+text {
+  font: 11px sans-serif;
+  cursor: pointer;
+}
+</style>
+
+<script src="//d3js.org/d3.v3.min.js"></script>
+
+<div id="cagd3" class="col-md-12"></div>
+
+<div id="info" class="col-md-12"></div>
+
+<script>
+
+var width = 760,
+    height = 700,
+    radius = (Math.min(width, height) / 2) - 10;
+
+var formatNumber = d3.format(",d");
+
+var x = d3.scale.linear()
+    .range([0, 2 * Math.PI]);
+
+// var y = d3.scale.sqrt()
+//     .range([0, radius]);
+var y = d3.scale.pow().exponent(1.3).domain([0, 1]).range([0, radius])
+
+var color = d3.scale.category20c();
+
+var partition = d3.layout.partition()
+    .value(function(d) { return d.size; });
+
+var a = function(t) {
+    return .299 * t.r + .587 * t.g + .114 * t.b
+}
+
+var padding = 5;
+var showlabelx = 0.01;
+
+var arc = d3.svg.arc()
+    .startAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x))); })
+    .endAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x + d.dx))); })
+    .innerRadius(function(d) { return Math.max(0, y(d.y)); })
+    .outerRadius(function(d) { return Math.max(0, y(d.y + d.dy)); });
+
+var svg = d3.select("#cagd3").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+      .append("g")
+    .attr("transform", "translate(" + width / 2 + "," + (height / 2) + ")");
+var info = d3.select("#info");
+var pathy, texty ;
+
+
+d3.json("http://ltfc.net/cagstore/outline_d3.json", function(error, root) {
+  if (error) throw error;
+
+  svg.selectAll("path")
+      .data(partition.nodes(root))
+      .enter().append("path")
+      .attr("d", arc)
+      .style("fill", function(d) { return color((d.children ? d : d.parent).name); })
+      .on("click", click)
+      .on("mouseover", mouseover)
+      .append("title")
+      .text(function(d) { return d.name + "\n" + formatNumber(d.value); });
+
+   var texty = svg.selectAll("text")
+         .data(partition.nodes(root))
+      .enter().append("text")
+      .style("fill-opacity", 1).style("fill", function(d) {
+            return colorvalue( d3.rgb( color((d.children ? d : d.parent).name)) ) < 125 ? "#eee" : "#000" ;
+      })
+      .style("visibility", function(e) {
+          return e.dx < showlabelx ? 'hidden' : null;
+      })
+      .attr("text-anchor", function(t) {
+          return x(t.x + t.dx / 2) > Math.PI ? "end" : "start"
+      })
+      .attr("dy", ".2em").attr("transform", function(t) {
+            var n = (t.name || "").split(" ").length > 1
+              , e = 180 * x(t.x + t.dx / 2) / Math.PI - 90
+              , r = e + (n ? -.5 : 0);
+            return "rotate(" + r + ")translate(" + (y(t.y) + padding) + ")rotate(" + (e > 90 ? -180 : 0) + ")"
+        })
+      .on("click", click)
+      .on("mouseover", mouseover);
+    texty.append("tspan").attr("x", 0).text(function(t) {
+        return t.depth ? t.name.split(" ")[0] : ""
+    }),
+    texty.append("tspan").attr("x", 0).attr("dy", "1em").text(function(t) {
+        return t.depth ? t.name.split(" ")[1] || "" : ""
+    })
+});
+
+function colorvalue(color) {
+    return .299 * color.r + .587 * color.g + .114 * color.b
+}
+
+// 递归遍历子节点
+function isSubnode(n, e) {
+    return n === e ?
+        !0 : n.children ?
+            n.children.some(function(n) {
+                return isSubnode(n, e)
+            }) : !1 ;
+}
+
+function mouseover(d){
+    var label = d.name ;
+  var age = d.parent ? d.parent.name : '';
+    var painting = d.paintings
+    ? d.paintings.map( paint =>
+      `<a href='http://ltfc.net/outline/${age}/${label}/${paint}'>${paint}</a>`).join('</br>')
+    : '';
+    info.html(`<h1>${label}</h1>${painting}`);
+}
+
+function click(d) {
+  svg.transition()
+      .duration(750)
+      .tween("scale", function() {
+        var xd = d3.interpolate(x.domain(), [d.x, d.x + d.dx]),
+            yd = d3.interpolate(y.domain(), [d.y, 1]),
+            yr = d3.interpolate(y.range(), [d.y ? 20 : 0, radius]);
+        return function(t) { x.domain(xd(t)); y.domain(yd(t)).range(yr(t)); };
+      })
+    .selectAll("path")
+    .attrTween("d", function(d) {
+        return function() { return arc(d); };
+    });
+
+   svg.selectAll("text")
+    .style("visibility", function(e) {
+        var wheelx = e.dx / d.dx;
+           return isSubnode(d, e)
+               ? wheelx < showlabelx ? 'hidden' : null
+               : d3.select(this).style("visibility");
+    })
+    .transition()
+    .duration(750)
+    .attrTween("text-anchor", function(t) {
+        return function() {
+            return x(t.x + t.dx / 2) > Math.PI ? "end" : "start"
+        }
+    }).attrTween("transform", function(t) {
+        var n = (t.name || "").split(" ").length > 1;
+        return function() {
+            var e = 180 * x(t.x + t.dx / 2) / Math.PI - 90
+              , r = e + (n ? -.5 : 0);
+            return "rotate(" + r + ")translate(" + (y(t.y) + padding) + ")rotate(" + (e > 90 ? -180 : 0) + ")"
+        }
+    }).style("fill-opacity", function(e) {
+        return isSubnode(d, e) ? 1 : 1e-6
+    }).each("end", function(e) {
+        d3.select(this).style("visibility", function(e) {
+            var wheelx = e.dx / d.dx;
+            return isSubnode(d, e)
+                ? wheelx < showlabelx ? 'hidden' : null
+                : d3.select(this).style("visibility");
+        });
+    });
+
+}
+d3.select(self.frameElement).style("height", height + "px");
+
+</script>
 
                                 
                                 </section>
@@ -377,7 +555,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"馆藏列表","level":"1.1.3","depth":2,"next":{"title":"见微知著","level":"1.2","depth":1,"path":"jian-wei-zhi-zhu.md","ref":"jian-wei-zhi-zhu.md","articles":[{"title":"清明上河图上细节多","level":"1.2.1","depth":2,"path":"jian-wei-zhi-zhu/qing-ming-shang-he-tu-shang-xi-jie-duo.md","ref":"jian-wei-zhi-zhu/qing-ming-shang-he-tu-shang-xi-jie-duo.md","articles":[]}]},"previous":{"title":"迁移到Github Pages","level":"1.1.2","depth":2,"path":"zhong-hua-zhen-bao-guan/qian-yi-dao-github-pages.md","ref":"zhong-hua-zhen-bao-guan/qian-yi-dao-github-pages.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"zhong-hua-zhen-bao-guan/guan-cang-lie-biao.md","mtime":"2017-11-13T11:56:28.000Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2017-11-14T02:22:27.164Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"馆藏列表","level":"1.1.3","depth":2,"next":{"title":"见微知著","level":"1.2","depth":1,"path":"jian-wei-zhi-zhu.md","ref":"jian-wei-zhi-zhu.md","articles":[{"title":"清明上河图上细节多","level":"1.2.1","depth":2,"path":"jian-wei-zhi-zhu/qing-ming-shang-he-tu-shang-xi-jie-duo.md","ref":"jian-wei-zhi-zhu/qing-ming-shang-he-tu-shang-xi-jie-duo.md","articles":[]}]},"previous":{"title":"迁移到Github Pages","level":"1.1.2","depth":2,"path":"zhong-hua-zhen-bao-guan/qian-yi-dao-github-pages.md","ref":"zhong-hua-zhen-bao-guan/qian-yi-dao-github-pages.md","articles":[]},"dir":"ltr"},"config":{"plugins":["disqus"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"disqus":{"useIdentifier":false,"shortName":"ltfc"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"李双涛","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"兰亭富春","language":"zh","gitbook":"*"},"file":{"path":"zhong-hua-zhen-bao-guan/guan-cang-lie-biao.md","mtime":"2017-11-14T03:25:03.000Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2017-11-14T06:47:11.499Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
@@ -385,6 +563,14 @@
         
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/URI.js/1.16.1/URI.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-disqus/plugin.js"></script>
+        
     
         
         <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
