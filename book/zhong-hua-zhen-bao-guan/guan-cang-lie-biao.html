@@ -399,7 +399,7 @@ var info = d3.select("#info");
 var pathy, texty ;
 
 
-d3.json("http://ltfc.net/cagstore/outline_d3.json", function(error, root) {
+d3.json("http://ltfc.net/cagstore/outline.json", function(error, root) {
   if (error) throw error;
 
   svg.selectAll("path")
